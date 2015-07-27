@@ -1,9 +1,6 @@
 var models = require('../models/models.js');
 // Autoload - factorio el código si ruta incluye :quizId
-exports.load = function(req, res, next, quizId) {
-	console.log('LOAD'+quizId);
-	console.log('LOAD'+models.Quiz.find(quizId));
-
+exports.load = function(req, res, next, quizId) {	
 	models.Quiz.find(quizId).then(
 		function(quiz) {
 			console.log('function quiz');
@@ -15,8 +12,7 @@ exports.load = function(req, res, next, quizId) {
 };
 
 // GET /quizes
-exports.index = function(req, res) {
-	console.log('AAAAAAAA');
+exports.index = function(req, res) {	
 	var search = req.query.search;
 	if (search) {
 		search = '%' + search.replace(/\s/g, '%') + '%';
@@ -64,4 +60,30 @@ exports.create = function(req, res) {
 			}
 		}
 	)
+};
+
+// GET /quizes/:id/edit
+exports.edit = function(req, res) {
+  var quiz = req.quiz;  // req.quiz: autoload de instancia de quiz
+  res.render('quizes/edit', {quiz: quiz, errors: []});
+};
+
+// PUT /quizes/:id
+exports.update = function(req, res) {
+  req.quiz.pregunta  = req.body.quiz.pregunta;
+  req.quiz.respuesta = req.body.quiz.respuesta;
+console.log('UPDATE');
+  req.quiz
+  .validate()
+  .then(
+    function(err){
+      if (err) {
+        res.render('quizes/edit', {quiz: req.quiz, errors: err.errors});
+      } else {
+        req.quiz     // save: guarda campos pregunta y respuesta en DB
+        .save( {fields: ["pregunta", "respuesta"]})
+        .then( function(){ res.redirect('/quizes');});
+      }     // Redirección HTTP a lista de preguntas (URL relativo)
+    }
+  ).catch(function(error){next(error)});
 };
