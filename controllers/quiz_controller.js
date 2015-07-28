@@ -3,7 +3,6 @@ var models = require('../models/models.js');
 exports.load = function(req, res, next, quizId) {	
 	models.Quiz.find(quizId).then(
 		function(quiz) {
-			console.log('function quiz');
 			if (quiz) {
 				req.quiz = quiz;
 				next();				
@@ -64,7 +63,7 @@ exports.create = function(req, res) {
 
 // GET /quizes/:id/edit
 exports.edit = function(req, res) {
-  var quiz = req.quiz;  // req.quiz: autoload de instancia de quiz
+  var quiz = req.quiz;  // req.quiz: autoload de instancia de quiz 
   res.render('quizes/edit', {quiz: quiz, errors: []});
 };
 
@@ -72,7 +71,7 @@ exports.edit = function(req, res) {
 exports.update = function(req, res) {
   req.quiz.pregunta  = req.body.quiz.pregunta;
   req.quiz.respuesta = req.body.quiz.respuesta;
-console.log('UPDATE');
+
   req.quiz
   .validate()
   .then(
@@ -87,3 +86,11 @@ console.log('UPDATE');
     }
   ).catch(function(error){next(error)});
 };
+
+// DELETE /quizes/:id
+
+exports.destroy = function(req, res) {
+	req.quiz.destroy().then(function(){
+		res.redirect('/quizes');
+	}).catch(function(error){next(error)});
+}
