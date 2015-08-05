@@ -11,7 +11,6 @@ exports.create = function(req, res) {
       { texto: req.body.comment.texto,          
         QuizId: req.params.quizId
         });
-console.log(comment);
   comment
   .validate()
   .then(
