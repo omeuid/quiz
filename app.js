@@ -29,6 +29,18 @@ app.use(methodOverride('_method'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next){
+  if (req.session.user && req.session.lastTransactionTime) {
+    var timestamp = Date.now();
+    if (timestamp - req.session.lastTransactionTime > 120000) {
+      req.session.user = null;
+    } else {
+      req.session.lastTransactionTime = timestamp;
+    }
+  };
+  next();
+});
+
 // Helpers dinamicos:
 app.use(function(req, res, next) {
 

@@ -10,8 +10,7 @@ exports.loginRequired = function(req, res, next){
 // Get /login   -- Formulario de login
 exports.new = function(req, res) {
     var errors = req.session.errors || {};
-    req.session.errors = {};
-
+    req.session.errors = {};    
     res.render('sessions/new', {errors: errors});
 };
 
@@ -33,7 +32,7 @@ exports.create = function(req, res) {
         // Crear req.session.user y guardar campos   id  y  username
         // La sesión se define por la existencia de:    req.session.user
         req.session.user = {id:user.id, username:user.username};
-
+        req.session.lastTransactionTime = Date.now();
         res.redirect(req.session.redir.toString());// redirección a path anterior a login
     });
 };
